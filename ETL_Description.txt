@@ -1,0 +1,17 @@
+To place this script into a production ETL process, I would use the following tools for the data infrastructure.
+
+Job scheduling & execution: Airflow
+Data storage: Amazon S3
+Data warehouse: RedShift or Snowflake
+
+The overall process would flow in this manner.
+
+1. Have Airflow kick off a daily job for the Python script
+2. Test to ensure that all CSV files are generated, duplicate users are not being seen, and users exist in all 3 files
+3. Store the CSV files into S3 buckets 
+4. Execute and maintain a data transformation script to ensure the data being sent to RedShift/Snowflake is consistent and clean. (i.e. format phone numbers, geographical locations are spelt correctly, dates are all standardized to one format, etc)
+5. Pull new data from S3 into RedShift or Snowflake tables
+6. Test the users_registration table for any null registration dates or account ages that could be an outlier
+7. Test the users_dimensions table for exception user ages and for null locations
+8. Test the users_pii table to ensure the hashed fields are indeed hashed, that access to this table is restricted, and a count of how many national identifiers are missing
+9. Test that the count of users is equal to the inner join product of all 3 tables
